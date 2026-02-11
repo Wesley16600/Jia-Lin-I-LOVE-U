@@ -5,41 +5,71 @@
 <title>Very Important Decision</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: #fff;
-  padding: 20px;
-}
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    overflow: hidden;
+  }
 
-img {
-  max-width: 90%;
-  border-radius: 12px;
-  margin-top: 10px;
-}
+  img {
+    max-width: 90%;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
 
-button {
-  padding: 15px 30px;
-  font-size: 18px;
-  margin: 15px;
-  border-radius: 8px;
-  border: none;
-}
+  #message {
+    font-size: 20px;
+    margin-top: 15px;
+    min-height: 28px;
+  }
 
-.bbt {
-  background: #f44336;
-  color: white;
-}
+  .btnRow {
+    position: relative;
+    height: 120px;
+    margin-top: 10px;
+  }
 
-.wes {
-  background: #4CAF50;
-  color: white;
-}
+  button {
+    padding: 15px 30px;
+    font-size: 18px;
+    margin: 15px;
+    border-radius: 10px;
+    border: none;
+  }
 
-#message {
-  font-size: 20px;
-  margin-top: 15px;
-}
+  .bbt {
+    background: #f44336;
+    color: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-140px);
+    top: 15px;
+  }
+
+  .wes {
+    background: #4CAF50;
+    color: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(40px);
+    top: 15px;
+  }
+
+  /* Floating hearts */
+  .heart {
+    position: fixed;
+    bottom: -30px;
+    font-size: 22px;
+    pointer-events: none;
+    animation: floatUp 2.4s linear forwards;
+  }
+
+  @keyframes floatUp {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-110vh); opacity: 0; }
+  }
 </style>
 </head>
 
@@ -47,52 +77,105 @@ button {
 
 <h2>BBT or Wesley? 🥺</h2>
 
-<img id="pic" src="photo2.jpg">
+<img id="pic" src="photo2.jpg" alt="Photo">
 
 <div id="message"></div>
 
-<br>
-
-<button class="bbt" onclick="bbt()">BBT</button>
-<button class="wes" onclick="wes()">WesWes</button>
+<div class="btnRow" id="btnRow">
+  <button class="bbt" id="bbtBtn" onclick="bbt()">BBT</button>
+  <button class="wes" id="wesBtn" onclick="wes()">WesWes</button>
+</div>
 
 <script>
+  let toggle = false;
+  let bbtClicks = 0;
+  let won = false;
 
-let toggle = false;
+  const sadLines = [
+    "You sure...? 🥺",
+    "WesWes is watching... 😔",
+    "That kinda hurt you know 💔",
+    "BBT cannot hug you like this 🫠",
+    "Last chance to reconsider 😢"
+  ];
 
-const sadLines = [
-  "You sure...? 🥺",
-  "WesWes is watching... 😔",
-  "That kinda hurt you know 💔",
-  "BBT cannot hug you like this 🫠",
-  "Last chance to reconsider 😢"
-];
-
-function bbt() {
-  toggle = !toggle;
-
-  // Switch between photo3 and photo4
-  if (toggle) {
-    document.getElementById("pic").src = "photo3.jpg";
-  } else {
-    document.getElementById("pic").src = "photo4.jpg";
+  function vibrate(ms) {
+    // Works on many phones, but browsers may restrict it (still worth trying)
+    if (navigator.vibrate) navigator.vibrate(ms);
   }
 
-  // Random sad line
-  const randomLine = sadLines[Math.floor(Math.random() * sadLines.length)];
-  document.getElementById("message").innerText = randomLine;
-}
+  function bbt() {
+    if (won) return;
 
-function wes() {
-  document.getElementById("pic").src = "photo5.jpg";
-  document.getElementById("message").innerText = "Correct answer ❤️ WesWes loves you many many 😌";
+    bbtClicks++;
+    toggle = !toggle;
 
-  // Hide buttons
-  document.querySelector(".bbt").style.display = "none";
-  document.querySelector(".wes").style.display = "none";
-}
+    // Switch between Image (3) and Image (4)
+    document.getElementById("pic").src = toggle ? "photo3.jpg" : "photo4.jpg";
 
+    // Random sad line
+    const randomLine = sadLines[Math.floor(Math.random() * sadLines.length)];
+    document.getElementById("message").innerText = randomLine;
+
+    // Subtle “wrong answer” vibration
+    vibrate(40);
+
+    // After 3 clicks, BBT starts dodging
+    if (bbtClicks >= 3) {
+      dodgeBBT();
+    }
+  }
+
+  function dodgeBBT() {
+    const btn = document.getElementById("bbtBtn");
+    const row = document.getElementById("btnRow");
+
+    const rowRect = row.getBoundingClientRect();
+
+    // Keep it within the button area
+    const maxX = Math.max(0, rowRect.width - btn.offsetWidth);
+    const maxY = Math.max(0, rowRect.height - btn.offsetHeight);
+
+    const x = Math.floor(Math.random() * maxX);
+    const y = Math.floor(Math.random() * maxY);
+
+    btn.style.left = x + "px";
+    btn.style.top = y + "px";
+    btn.style.transform = "none";
+  }
+
+  function spawnHearts(count = 22) {
+    for (let i = 0; i < count; i++) {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = (Math.random() > 0.2) ? "❤️" : "💖";
+      h.style.left = Math.floor(Math.random() * 100) + "vw";
+      h.style.fontSize = (16 + Math.floor(Math.random() * 22)) + "px";
+      h.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+      document.body.appendChild(h);
+
+      setTimeout(() => h.remove(), 3500);
+    }
+  }
+
+  function wes() {
+    won = true;
+
+    document.getElementById("pic").src = "photo5.jpg";
+    document.getElementById("message").innerText = "Correct answer ❤️ WesWes loves u many many 😌";
+
+    // Winning vibration (a bit more celebratory)
+    vibrate([80, 40, 120]);
+
+    // Hearts!
+    spawnHearts(26);
+
+    // Hide buttons
+    document.getElementById("bbtBtn").style.display = "none";
+    document.getElementById("wesBtn").style.display = "none";
+  }
 </script>
 
 </body>
 </html>
+
