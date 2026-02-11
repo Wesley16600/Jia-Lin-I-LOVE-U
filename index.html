@@ -8,68 +8,83 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* Make everything fit on one screen */
     body {
       font-family: 'Quicksand', sans-serif;
       text-align: center;
       background: #EFE6FF; /* soft pastel lavender */
-      padding: 20px;
       margin: 0;
-      overflow-x: hidden; /* allow vertical scroll, prevent sideways */
+      padding: 14px;
+      height: 100vh;
     }
 
     .card {
       max-width: 520px;
       margin: 0 auto;
-      padding: 18px;
+      height: calc(100vh - 28px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px;
       background: rgba(255,255,255,0.65);
       border-radius: 18px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      box-sizing: border-box;
     }
 
+    h2 {
+      margin: 6px 0 0 0;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    /* Image will shrink to fit available space */
     img {
       width: 100%;
-      height: auto;
+      max-height: 48vh;          /* key: keeps buttons visible */
+      object-fit: contain;       /* no cropping */
       border-radius: 14px;
-      margin-top: 10px;
     }
 
     #message {
-      font-size: 20px;
-      margin-top: 15px;
-      min-height: 28px;
+      font-size: 18px;
+      min-height: 24px;
       font-weight: 600;
+      margin: 0;
     }
 
     .btnRow {
       position: relative;
-      height: 120px;
-      margin-top: 10px;
+      height: 74px;   /* smaller so it fits on short screens */
+      margin-top: 2px;
+      flex-shrink: 0;
     }
 
     button {
       font-family: 'Quicksand', sans-serif;
-      font-weight: 600;
-      padding: 15px 30px;
-      font-size: 18px;
-      margin: 15px;
+      font-weight: 700;
+      padding: 12px 22px;
+      font-size: 17px;
       border-radius: 12px;
       border: none;
       box-shadow: 0 6px 14px rgba(0,0,0,0.10);
       cursor: pointer;
       transition: transform 0.08s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
+    button:active { transform: scale(0.98); }
 
     .bbt {
       background: #f44336;
       color: white;
       position: absolute;
       left: 50%;
-      transform: translateX(-140px);
-      top: 15px;
+      transform: translateX(-128px);
+      top: 8px;
     }
 
     .wes {
@@ -77,8 +92,8 @@
       color: white;
       position: absolute;
       left: 50%;
-      transform: translateX(40px);
-      top: 15px;
+      transform: translateX(20px);
+      top: 8px;
     }
 
     /* Floating hearts */
@@ -95,13 +110,31 @@
       from { transform: translateY(0); opacity: 1; }
       to { transform: translateY(-110vh); opacity: 0; }
     }
+
+    /* Extra safety for very small phones */
+    @media (max-height: 700px) {
+      h2 { font-size: 20px; }
+      img { max-height: 44vh; }
+      #message { font-size: 16px; }
+      .btnRow { height: 70px; }
+      button { padding: 11px 20px; font-size: 16px; }
+      .bbt { transform: translateX(-120px); }
+      .wes { transform: translateX(18px); }
+    }
+
+    @media (max-height: 600px) {
+      img { max-height: 38vh; }
+      .btnRow { height: 64px; }
+      button { padding: 10px 18px; font-size: 15px; }
+      .bbt { transform: translateX(-112px); }
+      .wes { transform: translateX(16px); }
+    }
   </style>
 </head>
 
 <body>
-
   <div class="card">
-    <h2 style="font-weight:700;">BBT or Wesley? 🥺</h2>
+    <h2>BBT or Wesley? 🥺</h2>
 
     <!-- Start image = Image (2) -->
     <img id="pic" src="photo2.jpg" alt="Photo">
@@ -148,9 +181,7 @@
       vibrate(40);
 
       // After 3 clicks, BBT dodges
-      if (bbtClicks >= 3) {
-        dodgeBBT();
-      }
+      if (bbtClicks >= 3) dodgeBBT();
     }
 
     function dodgeBBT() {
@@ -158,14 +189,12 @@
       const row = document.getElementById("btnRow");
       const rowRect = row.getBoundingClientRect();
 
-      // Keep it within the button area
       const maxX = Math.max(0, rowRect.width - btn.offsetWidth);
       const maxY = Math.max(0, rowRect.height - btn.offsetHeight);
 
       const x = Math.floor(Math.random() * maxX);
       const y = Math.floor(Math.random() * maxY);
 
-      // Move within row container
       btn.style.left = x + "px";
       btn.style.top = y + "px";
       btn.style.transform = "none";
@@ -180,7 +209,6 @@
         h.style.fontSize = (16 + Math.floor(Math.random() * 22)) + "px";
         h.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
         document.body.appendChild(h);
-
         setTimeout(() => h.remove(), 3500);
       }
     }
@@ -192,17 +220,14 @@
       document.getElementById("pic").src = "photo5.jpg";
       document.getElementById("message").innerText = "Correct answer ❤️ WesWes loves u many many 😌";
 
-      // Winning vibration pattern
       vibrate([80, 40, 120]);
-
-      // Hearts!
       spawnHearts(26);
 
-      // Hide buttons (game over)
+      // Hide buttons
       document.getElementById("bbtBtn").style.display = "none";
       document.getElementById("wesBtn").style.display = "none";
     }
   </script>
-
 </body>
 </html>
+
