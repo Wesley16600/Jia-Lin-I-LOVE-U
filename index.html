@@ -25,11 +25,12 @@
       justify-content:space-between;
       gap:10px;
       padding:14px;
-      background: #F6F0FF;
+      background:#F6F0FF !important;
       border-radius:18px;
       box-shadow:0 6px 20px rgba(0,0,0,0.08);
       box-sizing:border-box;
     }
+
 
     h2{
       margin:6px 0 0 0;
@@ -224,7 +225,7 @@
       won = true;
 
       picEl.src = "photo5.jpg";
-      msgEl.innerText = "Correct answer ❤️ WesWes loves u many many 😌";
+      msgEl.innerText = "Correct answer ❤️<br>WesWes loves u many many 😌";
 
       vibrate([80,40,120]);
       spawnHearts(26);
