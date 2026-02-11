@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Very Important Decision</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #fff;
+  padding: 20px;
+}
+
+img {
+  max-width: 90%;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  margin: 15px;
+  border-radius: 8px;
+  border: none;
+}
+
+.bbt {
+  background: #f44336;
+  color: white;
+}
+
+.wes {
+  background: #4CAF50;
+  color: white;
+}
+
+#message {
+  font-size: 20px;
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>BBT or Wesley? 🥺</h2>
+
+<img id="pic" src="photo2.jpg">
+
+<div id="message"></div>
+
+<br>
+
+<button class="bbt" onclick="bbt()">BBT</button>
+<button class="wes" onclick="wes()">WesWes</button>
+
+<script>
+
+let toggle = false;
+
+const sadLines = [
+  "You sure...? 🥺",
+  "WesWes is watching... 😔",
+  "That kinda hurt you know 💔",
+  "BBT cannot hug you like this 🫠",
+  "Last chance to reconsider 😢"
+];
+
+function bbt() {
+  toggle = !toggle;
+
+  // Switch between photo3 and photo4
+  if (toggle) {
+    document.getElementById("pic").src = "photo3.jpg";
+  } else {
+    document.getElementById("pic").src = "photo4.jpg";
+  }
+
+  // Random sad line
+  const randomLine = sadLines[Math.floor(Math.random() * sadLines.length)];
+  document.getElementById("message").innerText = randomLine;
+}
+
+function wes() {
+  document.getElementById("pic").src = "photo5.jpg";
+  document.getElementById("message").innerText = "Correct answer ❤️ WesWes loves you many many 😌";
+
+  // Hide buttons
+  document.querySelector(".bbt").style.display = "none";
+  document.querySelector(".wes").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
