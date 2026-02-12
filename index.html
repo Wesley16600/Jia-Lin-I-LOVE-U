@@ -77,7 +77,6 @@
       transform-origin:center;
     }
 
-
     button:active{ transform:scale(0.98); }
 
     .bbt{
@@ -143,6 +142,9 @@
     let bbtClicks = 0;
     let won = false;
 
+    // NEW: lock-centering state so later scaling doesn't break translate()
+    let wesCentered = false;
+
     const bbtPics = ["photo3.jpg", "photo4.jpg", "photo6.jpg", "photo7.jpg"];
     let picIndex = 0;
 
@@ -174,46 +176,66 @@
       if (navigator.vibrate) navigator.vibrate(ms);
     }
 
-function bbt(){
-  if (won) return;
+    function bbt(){
+      if (won) return;
 
-  bbtClicks++;
+      bbtClicks++;
 
-  // After 3 clicks → center and enlarge WesWes
-  if (bbtClicks === 3) {
-  wesBtn.style.left = "50%";
-  wesBtn.style.top = "50%";
-  wesBtn.style.transform = "translate(-50%, -50%) scale(2.5)";
-  wesBtn.style.zIndex = "10";
-  }
+      // After 3 "no" clicks -> WesWes goes BIG and CENTER (viewport center)
+      if (bbtClicks === 3) {
+        wesCentered = true;
 
-  // Cycle images
-  picEl.src = bbtPics[picIndex];
-  picIndex = (picIndex + 1) % bbtPics.length;
+        wesBtn.style.position = "fixed";  // important: center relative to screen
+        wesBtn.style.left = "50%";
+        wesBtn.style.top = "50%";
+        wesBtn.style.zIndex = "9999";
 
-  // Sad line
-  msgEl.innerText = sadLines[Math.floor(Math.random() * sadLines.length)];
-  vibrate(40);
+        // Make it noticeably bigger
+        wesScale = Math.max(wesScale, 2.5);
 
-  // Normal shrink before 8 clicks
-  if (bbtClicks < 8) {
-    bbtScale = bbtScale * 0.75;
-  }
+        // Optional: tiny pop animation
+        wesBtn.animate([
+          { transform: "translate(-50%, -50%) scale(2.1)" },
+          { transform: "translate(-50%, -50%) scale(2.7)" },
+          { transform: "translate(-50%, -50%) scale(2.5)" }
+        ], { duration: 260, easing: "ease-out" });
 
-  // After 8 clicks → nearly impossible
-  if (bbtClicks >= 8) {
-    bbtScale = 0.05;  // super tiny but visible
-    bbtBtn.style.opacity = "0.6";  // faint but still there
-  }
+        msgEl.innerText = "Ok enough 😤\nPress the correct answer.";
+        vibrate([60, 40, 80]);
+      }
 
-  wesScale = Math.min(2.2, wesScale + 0.2);
+      // Cycle images
+      picEl.src = bbtPics[picIndex];
+      picIndex = (picIndex + 1) % bbtPics.length;
 
-  bbtBtn.style.transform = `scale(${bbtScale})`;
-  wesBtn.style.transform = `scale(${wesScale})`;
+      // Sad line (only if not yet centered override message)
+      if (bbtClicks !== 3) {
+        msgEl.innerText = sadLines[Math.floor(Math.random() * sadLines.length)];
+        vibrate(40);
+      }
 
-  if (bbtClicks >= 2) dodgeBBT();
-}
+      // Normal shrink before 8 clicks
+      if (bbtClicks < 8) {
+        bbtScale = bbtScale * 0.75;
+      }
 
+      // After 8 clicks → nearly impossible
+      if (bbtClicks >= 8) {
+        bbtScale = 0.05;               // super tiny but visible
+        bbtBtn.style.opacity = "0.6";  // faint but still there
+      }
+
+      // Keep growing WesWes a bit (cap it)
+      wesScale = Math.min(2.8, wesScale + 0.2);
+
+      // Apply transforms (IMPORTANT: don't overwrite translate when centered)
+      bbtBtn.style.transform = `scale(${bbtScale})`;
+      wesBtn.style.transform = wesCentered
+        ? `translate(-50%, -50%) scale(${wesScale})`
+        : `scale(${wesScale})`;
+
+      if (bbtClicks >= 2) dodgeBBT();
+    }
 
     // Dodge but never overlap WesWes. Stop after 8 tries.
     function dodgeBBT(){
@@ -261,6 +283,8 @@ function bbt(){
     function wes(){
       won = true;
 
+      // cache-bust optional if GitHub Pages is stubborn:
+      // picEl.src = "photo5.jpg?v=2";
       picEl.src = "photo5b.jpg";
       msgEl.innerText = "Correct answer ❤️\nWesWes loves u many many 😌";
 
