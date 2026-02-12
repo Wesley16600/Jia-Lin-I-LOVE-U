@@ -182,27 +182,21 @@
       bbtClicks++;
 
       // After 3 "no" clicks -> WesWes goes BIG and CENTER (viewport center)
-      if (bbtClicks === 3) {
-        wesCentered = true;
+    if (bbtClicks === 3) {
+      wesCentered = true;
+    
+      wesBtn.style.position = "fixed";
+      wesBtn.style.left = "50%";
+      wesBtn.style.bottom = "20px";   // distance from bottom
+      wesBtn.style.top = "auto";
+      wesBtn.style.zIndex = "9999";
+    
+      wesScale = Math.max(wesScale, 2.4);
+    
+      msgEl.innerText = "Ok enough 😤\nPress the correct answer.";
+      vibrate([60,40,80]);
+    }
 
-        wesBtn.style.position = "fixed";  // important: center relative to screen
-        wesBtn.style.left = "50%";
-        wesBtn.style.top = "50%";
-        wesBtn.style.zIndex = "9999";
-
-        // Make it noticeably bigger
-        wesScale = Math.max(wesScale, 2.5);
-
-        // Optional: tiny pop animation
-        wesBtn.animate([
-          { transform: "translate(-50%, -50%) scale(2.1)" },
-          { transform: "translate(-50%, -50%) scale(2.7)" },
-          { transform: "translate(-50%, -50%) scale(2.5)" }
-        ], { duration: 260, easing: "ease-out" });
-
-        msgEl.innerText = "Ok enough 😤\nPress the correct answer.";
-        vibrate([60, 40, 80]);
-      }
 
       // Cycle images
       picEl.src = bbtPics[picIndex];
