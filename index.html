@@ -71,11 +71,12 @@
       cursor:pointer;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
-      transition:transform 0.12s ease;
+      transition: transform 0.25s ease, left 0.25s ease, top 0.25s ease;
       position:absolute;
       top:8px;
       transform-origin:center;
     }
+
 
     button:active{ transform:scale(0.98); }
 
@@ -177,6 +178,14 @@ function bbt(){
   if (won) return;
 
   bbtClicks++;
+
+  // After 3 clicks → center and enlarge WesWes
+  if (bbtClicks === 3) {
+  wesBtn.style.left = "50%";
+  wesBtn.style.top = "50%";
+  wesBtn.style.transform = "translate(-50%, -50%) scale(2.5)";
+  wesBtn.style.zIndex = "10";
+  }
 
   // Cycle images
   picEl.src = bbtPics[picIndex];
